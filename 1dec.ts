@@ -1,5 +1,6 @@
 // npx ts-node 1dec.ts
-const fs = require("fs");
+import fs from "fs";
+
 const data: string = fs.readFileSync("./data/1dec.txt", "utf8");
 // const data: string = fs.readFileSync("./samples/1dec.txt", "utf8");
 const foods: Array<Array<number>> = data
