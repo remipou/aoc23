@@ -1,8 +1,8 @@
-// npx ts-node 1dec.ts
-import fs from "fs";
+import getData from "./data";
 
-const data: string = fs.readFileSync("./data/1dec.txt", "utf8");
-// const data: string = fs.readFileSync("./samples/1dec.txt", "utf8");
+const [_ts, _file, date, test] = process.argv;
+const data: string = getData(date, test);
+
 const foods: Array<Array<number>> = data
   .split("\n\n")
   .map((f: string) => f.split("\n").map((e) => Number(e)));

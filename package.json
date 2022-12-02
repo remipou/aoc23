@@ -8,6 +8,6 @@
   },
   "dependencies": {},
   "scripts": {
-    "aoc": "./aoc.sh $1"
+    "aoc": "./aoc.sh $1 $2"
   }
 }

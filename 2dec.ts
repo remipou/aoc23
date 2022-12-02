@@ -1,7 +1,7 @@
-import fs from "fs";
+import getData from "./data";
 
-const data: string = fs.readFileSync("./data/2dec.txt", "utf8");
-// const data: string = fs.readFileSync("./samples/2dec.txt", "utf8");
+const [_ts, _file, date, test] = process.argv;
+const data: string = getData(date, test);
 
 const game: Array<string> = data.split("\n");
 const values: { [key: string]: number } = {
