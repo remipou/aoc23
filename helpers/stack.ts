@@ -1,7 +1,7 @@
 export type StackItem = number | string;
 
 class Stack {
-  data: Array<string | number>;
+  data: StackItem[];
   top: number;
 
   constructor() {
