@@ -1,5 +1,4 @@
 import getData from "./data";
-import prettyLog from "./helpers/log";
 
 const [_ts, _file, date, test] = process.argv;
 const lines = getData(date, test).split("\n");
@@ -91,12 +90,12 @@ for (const y in lines) {
     const x = matches.index;
     const numbers = getAdjacentsNumbers(x, parseInt(y, 10));
     if (numbers.length === 2) {
-      console.log(`gear at line ${y}, col ${x}: ${numbers[0]} & ${numbers[1]}`);
+      // console.log(`gear at line ${y}, col ${x}: ${numbers[0]} & ${numbers[1]}`);
       results2.push(numbers[0] * numbers[1]);
-    } else {
-      console.log(
-        `gear at line ${y}, col ${x}: not valid, ${numbers.length} adjacent numbers`
-      );
+      // } else {
+      // console.log(
+      //   `gear at line ${y}, col ${x}: not valid, ${numbers.length} adjacent numbers`
+      // );
     }
   }
 }
