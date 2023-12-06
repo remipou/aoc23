@@ -10,7 +10,9 @@
     "eslint": "^8.54.0",
     "typescript": "^5.3.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "large-map": "^1.0.0"
+  },
   "scripts": {
     "aoc": "./aoc.sh $1 $2",
     "new": "./new.sh $1"
