@@ -38,5 +38,22 @@ console.log(
 );
 
 console.time("part 2");
+const data2: number[] = getData(date, test)
+  .replace(/[^0-9|\r\n|\n|\r]+/g, "")
+  .split("\n")
+  .map(Number);
+const t2 = data2[0];
+const d2 = data2[1];
+const part2: number[] = [];
+for (let speed = 0; speed < t2 + 1; speed++) {
+  const travelTime = t2 - speed;
+  const distance = calculateDistance(speed, travelTime);
+
+  if (distance > d2) {
+    part2.push(distance);
+  }
+}
+
+console.log("part 2", part2.length);
 console.timeEnd("part 2");
 // console.log(part2);
