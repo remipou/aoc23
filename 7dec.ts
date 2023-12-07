@@ -94,29 +94,6 @@ const compareHands = (h1: Hand, h2: Hand): number => {
   return 0;
 };
 
-// const tests = [
-//   "AA111",
-//   "A1A1A",
-//   "AAAAA",
-//   "AA8AA",
-//   "23332",
-//   "TTT98",
-//   "23432",
-//   "A23A4",
-//   "23456",
-// ];
-// for (let i = 0; i < tests.length; i++) {
-//   const hand: Hand = tests[i].split("");
-//   console.log(hand, testHand(hand));
-// }
-
-// const tests2 = ["KTJJT", "KK677", "33332", "2AAAA", "77888", "77788"].map((e) =>
-//   e.split("")
-// );
-// console.log(compareHands(tests2[0], tests2[1]));
-// console.log(compareHands(tests2[2], tests2[3]));
-// console.log(compareHands(tests2[4], tests2[5]));
-
 const sortHands = (a: Game, b: Game): number => {
   const t1 = testHand(a.hand);
   const t2 = testHand(b.hand);
@@ -136,6 +113,80 @@ console.log(
   sortedHands.reduce((prev, curr) => prev + curr.rank * curr.bid, 0)
 );
 
+/* **************************************************************** */
+
 console.time("part 2");
+const strengths2 = [
+  "A",
+  "K",
+  "Q",
+  "T",
+  "9",
+  "8",
+  "7",
+  "6",
+  "5",
+  "4",
+  "3",
+  "2",
+  "J",
+];
+
+const handsWithJokerAtIndex = (h: Hand, index: number): Hand[] => {
+  const hands: Hand[] = [];
+  for (let i = 0; i < 12; i++) {
+    const hand = h.slice();
+    hand.splice(index, 1, strengths2[i]);
+    hands.push(hand);
+  }
+  return hands;
+};
+
+const allHandsWithJoker = (h: Hand): Hand[] => {
+  let hands: Hand[] = [h];
+  for (let i = 0; i < 5; i++) {
+    if (h[i] === "J") {
+      hands = hands.map((e) => handsWithJokerAtIndex(e, i)).flat();
+    }
+  }
+  return hands;
+};
+
+const compareHands2 = (h1: Hand, h2: Hand): number => {
+  for (let i = 0; i < 5; i++) {
+    if (h1[i] !== h2[i])
+      return strengths2.indexOf(h1[i]) < strengths2.indexOf(h2[i]) ? 1 : -1;
+  }
+  return 0;
+};
+
+const testHand2 = (g: Game): number => {
+  if (!g.hand.includes("J")) {
+    return testHand(g.hand);
+  }
+  const allHands = allHandsWithJoker(g.hand);
+  const sortedHands = allHands
+    .slice()
+    .sort((a, b) => sortHands({ ...g, hand: a }, { ...g, hand: b }));
+  const hand = sortedHands[sortedHands.length - 1];
+  return testHand(hand);
+};
+
+const sortHands2 = (a: Game, b: Game): number => {
+  const t1 = testHand2(a);
+  const t2 = testHand2(b);
+  if (t1 > t2) return 1;
+  if (t1 < t2) return -1;
+  return compareHands2(a.hand, b.hand);
+};
+
+const sortedHands2 = data.slice().sort((a, b) => sortHands2(a, b));
+for (let i = 0; i < sortedHands2.length; i++) {
+  sortedHands2[i].rank = i + 1;
+}
+
+console.log(
+  "part 2",
+  sortedHands2.reduce((prev, curr) => prev + curr.rank * curr.bid, 0)
+);
 console.timeEnd("part 2");
-// console.log(part2);
