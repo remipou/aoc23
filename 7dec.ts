@@ -36,27 +36,40 @@ const data: Array<Game> = getData(date, test)
 
 console.time("part 1");
 
-const sortedHand = (h: Hand): Hand => h.sort();
+const sortedHand = (h: Hand): Hand => h.slice().sort();
 const isFiveOfAKind = (h: Hand): boolean => [...new Set(h)].length === 1;
 const isFourOfAKind = (h: Hand): boolean => {
-  const h1 = sortedHand(h.slice());
+  const h1 = sortedHand(h);
   return (
-    (h1[0] == h1[1] && h1[1] === h1[2] && h1[2] === h1[3] && h1[3] !== h1[4]) ||
+    (h1[0] === h1[1] &&
+      h1[1] === h1[2] &&
+      h1[2] === h1[3] &&
+      h1[3] !== h1[4]) ||
     (h1[0] !== h1[1] && h1[1] === h1[2] && h1[2] === h1[3] && h1[3] === h1[4])
   );
 };
 const isFullHouse = (h: Hand): boolean => {
-  const h1 = sortedHand(h.slice());
+  const h1 = sortedHand(h);
   return (
-    (h1[0] == h1[1] && h1[1] !== h1[2] && h1[2] === h1[3] && h1[3] === h1[4]) ||
+    (h1[0] === h1[1] &&
+      h1[1] !== h1[2] &&
+      h1[2] === h1[3] &&
+      h1[3] === h1[4]) ||
     (h1[0] === h1[1] && h1[1] === h1[2] && h1[2] !== h1[3] && h1[3] === h1[4])
   );
 };
 const isThreeOfAKind = (h: Hand): boolean => {
-  const h1 = sortedHand(h.slice());
+  const h1 = sortedHand(h);
   return (
-    (h1[0] != h1[1] && h1[1] !== h1[2] && h1[2] === h1[3] && h1[3] === h1[4]) ||
-    (h1[0] === h1[1] && h1[1] === h1[2] && h1[2] !== h1[3] && h1[3] !== h1[4])
+    (h1[0] !== h1[1] &&
+      h1[1] !== h1[2] &&
+      h1[2] === h1[3] &&
+      h1[3] === h1[4]) ||
+    (h1[0] === h1[1] &&
+      h1[1] === h1[2] &&
+      h1[2] !== h1[3] &&
+      h1[3] !== h1[4]) ||
+    (h1[0] !== h1[4] && h1[1] === h1[2] && h1[2] === h1[3])
   );
 };
 const isTwoPairs = (h: Hand): boolean => [...new Set(h)].length === 3;
@@ -116,17 +129,12 @@ const sortedHands = data.slice().sort((a, b) => sortHands(a, b));
 for (let i = 0; i < sortedHands.length; i++) {
   sortedHands[i].rank = i + 1;
 }
-console.log(sortedHands.filter((h) => isFullHouse(h.hand)));
 
 console.timeEnd("part 1");
 console.log(
   "part 1",
   sortedHands.reduce((prev, curr) => prev + curr.rank * curr.bid, 0)
 );
-
-// wrong 252885060
-// wrong too low 253073011
-// wrong 253090037
 
 console.time("part 2");
 console.timeEnd("part 2");
