@@ -45,5 +45,34 @@ console.log(
 console.timeEnd("part 1");
 
 console.time("part 2");
+
+const testHistory = data[2];
+
+const extrapolateBackwards = (history: History): number => {
+  for (let i = history.length - 1; i >= 0; i--) {
+    const line = history[i];
+    line.unshift(
+      i === history.length - 1 ? 0 : history[i][0] - history[i + 1][0]
+    );
+  }
+  return history[0][0];
+};
+
+const processHistoryBackwards = (arr: Line): number => {
+  let history: History = [arr.slice()];
+  let i = 0;
+  do {
+    history[i + 1] = getDiff(history[i]);
+    i++;
+  } while (!isDone(history[i]));
+  return extrapolateBackwards(history);
+};
+
+console.log(
+  "part 1",
+  data
+    .map((e) => processHistoryBackwards(e))
+    .reduce((prev, curr) => curr + prev, 0)
+);
+
 console.timeEnd("part 2");
-// console.log(part2);
