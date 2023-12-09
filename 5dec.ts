@@ -82,12 +82,12 @@ for (const i in seeds) {
   console.log(i, seeds.length);
   const seed = seeds[i];
   const soil = getter(seedToSoil, seed);
-  const fertilizer = getter(soilToFertilizer, soil);
-  const water = getter(fertilizerToWater, fertilizer);
-  const light = getter(waterToLight, water);
-  const temperature = getter(lightToTemperature, light);
-  const humidity = getter(temperatureToHumidity, temperature);
-  const location = getter(humidityToLocation, humidity);
+  // const fertilizer = getter(soilToFertilizer, soil);
+  // const water = getter(fertilizerToWater, fertilizer);
+  // const light = getter(waterToLight, water);
+  // const temperature = getter(lightToTemperature, light);
+  // const humidity = getter(temperatureToHumidity, temperature);
+  // const location = getter(humidityToLocation, humidity);
   // console.log({
   //   seed,
   //   soil,
@@ -98,8 +98,8 @@ for (const i in seeds) {
   //   humidity,
   //   location,
   // });
-  if (result === 0 || location < result) {
-    result = location;
+  if (result === 0 || soil < result) {
+    result = soil;
   }
 }
 
