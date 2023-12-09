@@ -52,6 +52,41 @@ let step = 0;
 
 const allPositionsOk = () => positions.every((e) => e[2] === "Z");
 
+const allSteps: number[] = [];
+
+function lcm(a: number, b: number): number {
+  return (a / gcd(a, b)) * b;
+}
+
+function gcd(a: number, b: number): number {
+  var t = 0;
+  a < b && ((t = b), (b = a), (a = t));
+  t = a % b;
+  return t ? gcd(b, t) : b;
+}
+
+// const lcm = (arr: number[]) => {
+//   // Return the Smallest Common Multiple for pair of Input Numbers.
+
+//   const [min, max] = arr.sort((a, b) => a - b);
+//   // Sorting Input Array to give min and max values for the range
+
+//   const range = Array(max - min + 1)
+//     .fill(0)
+//     .map((_, i) => i + min);
+//   // Initialize the Array
+
+//   let prodAll = range.reduce((product, number) => product * number);
+//   // Finding the product of all numbers which is a gauranteed multiple of the range
+
+//   let res = Array(prodAll / max)
+//     .fill(0)
+//     .map((_, i) => (i + 1) * max) // Initialize an Array of all the multiples of the 'max' number upto 'prodAll'
+//     .find((mulp) => range.every((val) => mulp % val === 0)); // check if any number meets the divisiblable criteria sooner then 'prodAll'
+
+//   return res;
+// };
+
 const move = (index: number): void => {
   const next = map.get(positions[index]);
   let position: string = "";
@@ -65,10 +100,18 @@ const move = (index: number): void => {
 
 while (!allPositionsOk()) {
   for (let i = 0; i < positions.length; i++) {
-    move(i);
+    if (positions[i][2] !== "Z") {
+      move(i);
+    }
+    if (positions[i][2] === "Z" /*&& !allSteps.includes(step + 1)*/) {
+      allSteps.push(step + 1);
+    }
   }
   step++;
 }
 
 console.timeEnd("part 2");
-console.log("part2", step);
+console.log(
+  "part2",
+  allSteps.reduce((acc, cur) => lcm(acc, cur), 1)
+);
