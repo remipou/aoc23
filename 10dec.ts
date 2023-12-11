@@ -9,6 +9,7 @@ type MOVE = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type POS = [number, number];
 
 let start: POS = [0, 0];
+
 for (let i = 0; i < data.length; i++) {
   if (data[i].includes("S")) {
     start = [data[i].indexOf("S"), i];
@@ -132,32 +133,30 @@ const makeStep = (pos: POS, last: POS | null = null): POS => {
   // console.log(pos, "===>", data[pos[1]][pos[0]], "===>", moves, "===>", move);
   return makeMove(pos, move);
 };
-console.log("start", start, data[start[1]][start[0]]);
+// console.log("start", start, data[start[1]][start[0]]);
 let position: POS = makeStep(start);
 let step: number = 1;
 let last: POS = [...start];
-const distances = new Map<number, number>();
+const pipes = new Map<string, string>();
+pipes.set(`${start[1]}_${start[0]}`, "S");
 do {
   const copyLast: POS = [...last];
   last = [...position];
   position = makeStep(position, copyLast);
   if (position) {
-    distances.set(
-      step,
-      Math.abs(position[0] - start[0]) + Math.abs(position[1] - start[1])
-    );
+    pipes.set(`${position[0]}_${position[1]}`, data[position[1]][position[0]]);
   }
   step++;
 } while (position);
 
-// const getAllIndexes = (arr: number[], val: number) => {
-//   const indexes: number[] = [];
-//   let i: number = -1;
-//   while ((i = arr.indexOf(val, i + 1)) != -1) {
-//     indexes.push(i);
-//   }
-//   return indexes;
-// };
+let copyforVisualization: string[][] = [];
+for (let i = 0; i < data.length; i++) {
+  copyforVisualization[i] = [];
+  for (let j = 0; j < data[i].length; j++) {
+    copyforVisualization[i][j] = pipes.get(`${j}_${i}`) || ".";
+  }
+}
+console.log(copyforVisualization.map((l) => l.join("")).join("\n"));
 
 console.timeEnd("part 1");
 console.log("part 1", step / 2);
