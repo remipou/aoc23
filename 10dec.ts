@@ -152,7 +152,11 @@ let copyforVisualization: string[][] = [];
 for (let i = 0; i < data.length; i++) {
   copyforVisualization[i] = [];
   for (let j = 0; j < data[i].length; j++) {
-    copyforVisualization[i][j] = pipes.get(`${j}_${i}`) || ".";
+    if (data[i][j] === "S") {
+      copyforVisualization[i][j] = "S"; // obs hardcoded
+    } else {
+      copyforVisualization[i][j] = pipes.get(`${j}_${i}`) || ".";
+    }
   }
 }
 console.log(copyforVisualization.map((l) => l.join("")).join("\n"));
