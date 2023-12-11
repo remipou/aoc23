@@ -70,11 +70,16 @@ const getAddress = (galaxy: string): { x: number; y: number } => {
   return { x: 0, y: 0 };
 };
 
-const getDistance = (g1: string, g2: string): number => {
+const getDistance = (
+  g1: string,
+  g2: string,
+  multiplicator: number = 1
+): number => {
   const a1 = getAddress(g1);
   const a2 = getAddress(g2);
-  const extraRows = emptyBetween(emptyRows, a1.y, a2.y);
-  const extraColumns = emptyBetween(emptyColumns, a1.x, a2.x);
+  const m = multiplicator === 1 ? 1 : multiplicator - 1;
+  const extraRows = m * emptyBetween(emptyRows, a1.y, a2.y);
+  const extraColumns = m * emptyBetween(emptyColumns, a1.x, a2.x);
   let x1: number, x2: number, y1: number, y2: number;
   if (a1.x >= a2.x) {
     x1 = a1.x + extraRows;
@@ -97,35 +102,36 @@ const visualize = (universe: Universe) =>
   console.log(universe.map((l) => l.join("")).join("\n"));
 
 const { universe, count } = giveName(data);
-// visualize(universe);
-const paths = new Map<string, number>();
+
 const emptyRows = getEmptyRows(universe);
 const emptyColumns = getEmptyColumns(universe);
-// console.log("emptyRows", emptyRows);
-// console.log("emptyColumns", emptyColumns);
 
-for (let i in [...Array(count).keys()]) {
-  for (let j in [...Array(count).keys()]) {
-    if (i === j) continue;
-    const g1 = `${parseInt(i) + 1}`;
-    const g2 = `${parseInt(j) + 1}`;
-    const key = [parseInt(i) + 1, parseInt(j) + 1]
-      .sort()
-      .reduce(
-        (prev, curr, index) => (index === 0 ? `${curr}` : `${prev}-${curr}`),
-        ""
-      );
-    if (paths.has(key)) continue;
-    paths.set(key, getDistance(g1, g2));
+const run = (multiplicator: number = 1): number => {
+  const paths = new Map<string, number>();
+  for (let i in [...Array(count).keys()]) {
+    for (let j in [...Array(count).keys()]) {
+      if (i === j) continue;
+      const g1 = `${parseInt(i) + 1}`;
+      const g2 = `${parseInt(j) + 1}`;
+      const key = [parseInt(i) + 1, parseInt(j) + 1]
+        .sort()
+        .reduce(
+          (prev, curr, index) => (index === 0 ? `${curr}` : `${prev}-${curr}`),
+          ""
+        );
+      if (paths.has(key)) continue;
+      paths.set(key, getDistance(g1, g2, multiplicator));
+    }
   }
-}
-// console.log(paths, Array.from(paths).length);
+  return [...paths.values()].reduce(
+    (prev: number, curr: number) => prev + curr,
+    0
+  );
+};
+
+console.log("part1", run());
 console.timeEnd("part 1");
-console.log(
-  "part1",
-  [...paths.values()].reduce((prev: number, curr: number) => prev + curr, 0)
-);
 
 console.time("part 2");
+console.log("part2", run(1000000));
 console.timeEnd("part 2");
-// console.log(part2);
