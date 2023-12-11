@@ -140,12 +140,11 @@ let last: POS = [...start];
 const pipes = new Map<string, string>();
 pipes.set(`${start[1]}_${start[0]}`, "S");
 do {
+  pipes.set(`${position[0]}_${position[1]}`, data[position[1]][position[0]]);
   const copyLast: POS = [...last];
   last = [...position];
   position = makeStep(position, copyLast);
-  if (position) {
-    pipes.set(`${position[0]}_${position[1]}`, data[position[1]][position[0]]);
-  }
+
   step++;
 } while (position);
 
@@ -162,5 +161,30 @@ console.timeEnd("part 1");
 console.log("part 1", step / 2);
 
 console.time("part 2");
+
+const getCountVerticalBarsBefore = (row: number, column: number): number => {
+  let count: number = 0;
+  for (let i: number = 0; i < column; i++) {
+    if (["|", "L", "J"].includes(copyforVisualization[row][i])) {
+      count++;
+    }
+  }
+  return count;
+};
+
+let enclosed: number = 0;
+for (let i = 0; i < data.length; i++) {
+  for (let j = 0; j < data[i].length; j++) {
+    if (copyforVisualization[i][j] === ".") {
+      const count = getCountVerticalBarsBefore(i, j);
+      if (count > 0 && count % 2 === 1) {
+        enclosed++;
+      }
+    }
+  }
+}
+// 1529 too high
+// 526 wrong
+// 677 wrong
 console.timeEnd("part 2");
-// console.log(part2);
+console.log("part2", enclosed);
