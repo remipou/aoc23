@@ -16,7 +16,7 @@ const visualize = (grid: Grid): void =>
 
 console.time("part 1");
 
-const findReflection = (grid: Grid, isHorizontal: boolean = true): number => {
+const findReflection = (grid: Grid, multiplicator: number = 1): number => {
   outerLoop: for (let testIndex = 1; testIndex < grid.length; testIndex++) {
     innerLoop: for (
       let i = 1;
@@ -27,7 +27,7 @@ const findReflection = (grid: Grid, isHorizontal: boolean = true): number => {
         continue outerLoop;
       }
     }
-    return isHorizontal ? 100 * testIndex : testIndex;
+    return multiplicator * testIndex;
   }
   return 0;
 };
@@ -51,10 +51,11 @@ const rotate = (grid: Grid, direction: boolean = true): Grid => {
 // const rotatedBack = rotate(rotated, false);
 // visualize(rotatedBack);
 
-const findHorizontalReflection = (grid: Grid): number => findReflection(grid);
+const findHorizontalReflection = (grid: Grid): number =>
+  findReflection(grid, 100);
 
 const findVerticalReflection = (grid: Grid): number =>
-  findReflection(rotate(grid), false);
+  findReflection(rotate(grid));
 
 const processGrid = (grid: Grid): number =>
   findVerticalReflection(grid) + findHorizontalReflection(grid);
