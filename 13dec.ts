@@ -16,18 +16,30 @@ const visualize = (grid: Grid): void =>
 
 console.time("part 1");
 
-const findReflection = (grid: Grid, multiplicator: number = 1): number => {
+const getDifferences = (a1: Row, a2: Row): number => {
+  let diff: number = 0;
+  for (let i = 0; i < a1.length; i++) {
+    if (a1[i] !== a2[i]) {
+      diff++;
+    }
+  }
+  return diff;
+};
+
+const findReflection = (grid: Grid, isPart2: boolean = false): number => {
+  const isPart1: boolean = !isPart2;
   outerLoop: for (let testIndex = 1; testIndex < grid.length; testIndex++) {
     innerLoop: for (
       let i = 1;
       testIndex - i >= 0 && testIndex + i - 1 < grid.length;
       i++
     ) {
-      if (grid[testIndex - i].join("") != grid[testIndex + i - 1].join("")) {
+      const diff = getDifferences(grid[testIndex - i], grid[testIndex + i - 1]);
+      if ((isPart2 && diff !== 1 && diff !== 0) || (isPart1 && diff !== 0)) {
         continue outerLoop;
       }
     }
-    return multiplicator * testIndex;
+    return testIndex;
   }
   return 0;
 };
@@ -51,14 +63,16 @@ const rotate = (grid: Grid, direction: boolean = true): Grid => {
 // const rotatedBack = rotate(rotated, false);
 // visualize(rotatedBack);
 
-const findHorizontalReflection = (grid: Grid): number =>
-  findReflection(grid, 100);
+const findHorizontalReflection = (
+  grid: Grid,
+  isPart2: boolean = false
+): number => findReflection(grid, isPart2);
 
-const findVerticalReflection = (grid: Grid): number =>
-  findReflection(rotate(grid));
+const findVerticalReflection = (grid: Grid, isPart2: boolean = false): number =>
+  findReflection(rotate(grid), isPart2);
 
 const processGrid = (grid: Grid): number =>
-  findVerticalReflection(grid) + findHorizontalReflection(grid);
+  findVerticalReflection(grid) + 100 * findHorizontalReflection(grid);
 
 console.timeEnd("part 1");
 console.log(
@@ -73,58 +87,64 @@ const deepCopy = (grid: Grid): Grid =>
     return row.slice();
   });
 
-const processPart2 = (grid: Grid): number => {
-  const originalHorizontalReflection = findReflection(grid);
-  const originalVerticalReflection = findReflection(rotate(grid));
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[0].length; j++) {
-      const newGrid = deepCopy(grid);
-      const elt = grid[i][j];
-      newGrid[i][j] = elt === "#" ? "." : "#";
-      const horizontalReflection = findReflection(newGrid);
-      if (
-        horizontalReflection > 0 &&
-        horizontalReflection !== originalHorizontalReflection
-      ) {
-        console.log(
-          "smudge at (horizontal reflection)",
-          { x: j, y: i },
-          horizontalReflection
-        );
-        return horizontalReflection * 100;
-      }
-    }
-  }
-  console.log("continuing");
+const processGrid2 = (grid: Grid): number =>
+  findVerticalReflection(grid, true) +
+  100 * findHorizontalReflection(grid, true);
 
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[0].length; j++) {
-      const newGrid = deepCopy(grid);
-      const elt = grid[i][j];
-      newGrid[i][j] = elt === "#" ? "." : "#";
-      const verticalReflection = findReflection(rotate(newGrid));
-      if (
-        verticalReflection > 0 &&
-        verticalReflection !== originalVerticalReflection
-      ) {
-        console.log(
-          "smudge at (vertical reflection)",
-          { x: j, y: i },
-          verticalReflection
-        );
-        return verticalReflection;
-      }
-    }
-  }
-  console.log("no reflection");
-  return 0;
-};
+// const processPart2 = (grid: Grid, index: number): number => {
+//   const originalHorizontalReflection = findHorizontalReflection(grid);
+//   const originalVerticalReflection = findVerticalReflection(grid);
+//   for (let i = 0; i < grid.length; i++) {
+//     for (let j = 0; j < grid[0].length; j++) {
+//       const newGrid = deepCopy(grid);
+//       const elt = grid[i][j];
+//       newGrid[i][j] = elt === "#" ? "." : "#";
+//       const horizontalReflection = findHorizontalReflection(newGrid);
+//       if (
+//         horizontalReflection > 0 &&
+//         horizontalReflection !== originalHorizontalReflection
+//       ) {
+//         console.log(
+//           index,
+//           "smudge at (horizontal reflection)",
+//           { x: j, y: i },
+//           horizontalReflection
+//         );
+//         return horizontalReflection * 100;
+//       }
+//     }
+//   }
+//   console.log("continuing");
+
+//   for (let i = 0; i < grid.length; i++) {
+//     for (let j = 0; j < grid[0].length; j++) {
+//       const newGrid = deepCopy(grid);
+//       const elt = grid[i][j];
+//       newGrid[i][j] = elt === "#" ? "." : "#";
+//       const verticalReflection = findVerticalReflection(newGrid);
+//       if (
+//         verticalReflection > 0 &&
+//         verticalReflection !== originalVerticalReflection
+//       ) {
+//         console.log(
+//           index,
+//           "smudge at (vertical reflection)",
+//           { x: j, y: i },
+//           verticalReflection
+//         );
+//         return verticalReflection;
+//       }
+//     }
+//   }
+//   console.log(index, "no reflection");
+//   return 0;
+// };
 
 console.timeEnd("part 2");
-console.log(data.map((g) => processPart2(g as Grid)));
+
 console.log(
   "part2",
   data
-    .map((g) => processPart2(g as Grid))
+    .map((g) => processGrid2(g as Grid))
     .reduce((prev, curr) => prev + curr, 0)
 );
