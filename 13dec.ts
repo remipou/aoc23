@@ -1,19 +1,22 @@
 import getData from "./data";
 
 const [_ts, _file, date, test] = process.argv;
-const raw = getData(date, test);
-const data: any = raw
-  .split("\n\n")
-  .map((e) => e.split("\n").map((r) => r.split("")));
 
 type Row = Array<"#" | ".">;
 type Grid = Array<Row>;
 
-console.log(raw);
+const data: Array<Array<Array<string>>> = getData(date, test)
+  .split("\n\n")
+  .map((e) => e.split("\n").map((r) => r.split("")));
+
+const visualize = (grid: Grid): void =>
+  console.log(grid.map((r) => r.join("")).join("\n") + "\n");
+
+// data.map((g) => visualize(g as Grid));
 
 console.time("part 1");
 
-const findHorizontalReflection = (grid: Grid): number => {
+const findReflection = (grid: Grid, isHorizontal: boolean = true): number => {
   outerLoop: for (let testIndex = 1; testIndex < grid.length; testIndex++) {
     innerLoop: for (
       let i = 1;
@@ -24,22 +27,43 @@ const findHorizontalReflection = (grid: Grid): number => {
         continue outerLoop;
       }
     }
-    return 100 * testIndex;
+    return isHorizontal ? 100 * testIndex : testIndex;
   }
   return 0;
 };
 
-const findVerticalReflection = (grid: Grid): number => {
-  return 0;
+const transpose = (grid: Grid): Grid =>
+  grid[0].map((_, i) => grid.map((row) => row[i]));
+
+const rotate = (grid: Grid, direction: boolean = true): Grid => {
+  if (direction) return transpose(grid);
+  let newGrid: Grid = grid.slice();
+  for (let i = 0; i < 3; i++) {
+    newGrid = transpose(newGrid);
+  }
+  return newGrid;
 };
 
-console.log("h0", findHorizontalReflection(data[0]));
-console.log("h1", findHorizontalReflection(data[1]));
-console.log("v0", findVerticalReflection(data[0]));
-console.log("v1", findVerticalReflection(data[1]));
+// console.log("rotate");
+// const rotated = rotate(data[0] as Grid);
+// visualize(rotated);
+// console.log("rotate back");
+// const rotatedBack = rotate(rotated, false);
+// visualize(rotatedBack);
+
+const findHorizontalReflection = (grid: Grid): number => findReflection(grid);
+
+const findVerticalReflection = (grid: Grid): number =>
+  findReflection(rotate(grid), false);
+
+const processGrid = (grid: Grid): number =>
+  findVerticalReflection(grid) + findHorizontalReflection(grid);
 
 console.timeEnd("part 1");
-// console.log(part1);
+console.log(
+  "part1",
+  data.map((g) => processGrid(g as Grid)).reduce((prev, curr) => prev + curr, 0)
+);
 
 console.time("part 2");
 console.timeEnd("part 2");
