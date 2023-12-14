@@ -105,12 +105,31 @@ const cycle = (d: T): T => {
 const cycles = new Map<string, number>();
 
 let d: T = deepCopy(data);
-for (let i = 0; i < 4; i++) {
-  visualize(d);
+let stepsUpToRepeat: number = 0;
+while (true) {
+  stepsUpToRepeat++;
+  d = cycle(d);
+  const s = stringify(d);
+  if (cycles.has(s)) {
+    const v = cycles.get(s);
+    if (v === 2) {
+      break;
+    }
+    cycles.set(s, 2);
+  } else {
+    cycles.set(s, 1);
+  }
+}
+const cycleLength = Array.from(cycles, ([s, v]) => ({ s, v })).filter(
+  (e) => e.v === 2
+).length;
+
+const remainingStepsNeeded: number =
+  (1000000000 - stepsUpToRepeat) % cycleLength;
+
+for (let i = 0; i < remainingStepsNeeded; i++) {
   d = cycle(d);
 }
 
-// console.log(cycles);
-
 console.timeEnd("part 2");
-// console.log("part2", getLoad(endState));
+console.log("part2", getLoad(d));
