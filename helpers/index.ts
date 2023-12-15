@@ -1,5 +1,5 @@
 import getAllIndexes from "./indexes";
 import prettyLog from "./log";
-import Stack, { StackItem } from "./stack";
+import Stack from "./stack";
 
-export { prettyLog, getAllIndexes, StackItem, Stack };
+export { prettyLog, getAllIndexes, Stack };

@@ -1,6 +1,4 @@
-export type StackItem = number | string;
-
-class Stack {
+class Stack<StackItem> {
   data: StackItem[];
   top: number;
 
