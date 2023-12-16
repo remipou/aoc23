@@ -102,12 +102,14 @@ const calculateEnergy = (): number =>
 
 const runPart1 = async () => {
   console.time("part 1");
-  await move({ col: 0, row: 0 }, { col: 1, row: 0 }, 0);
-  console.timeEnd("part 1");
+  await move({ col: -1, row: 0 }, { col: 1, row: 0 }, 0);
   visualize(energy);
+  console.timeEnd("part 1");
   console.log("part 1", calculateEnergy());
 };
 runPart1();
+
+// 8152 TOO HIGH
 
 // const runPart2 = async () => {
 //   console.time("part 2");
