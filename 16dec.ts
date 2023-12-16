@@ -20,14 +20,7 @@ const visualize = (d: T | E): void =>
 const energy: E = data.map((row: string[]) => row.slice().map(() => 0));
 energy[0][0] = 1;
 
-visualize(data);
-
-let lastThread: number = 0;
-
-const nextThread = (): number => {
-  lastThread++;
-  return lastThread;
-};
+// visualize(data);
 
 const splitsUsed: POS[] = [];
 const isSplitAlreadyUsed = (position: POS): boolean =>
@@ -37,11 +30,7 @@ const isSplitAlreadyUsed = (position: POS): boolean =>
     )
   );
 
-const move = async (
-  currentPosition: POS,
-  direction: MOVE,
-  thread: number
-): Promise<void> => {
+const move = async (currentPosition: POS, direction: MOVE): Promise<void> => {
   if (direction.col === -1 && currentPosition.col === 0) {
     return;
   }
@@ -66,31 +55,31 @@ const move = async (
     (next === "|" && direction.row !== 0) ||
     (next === "-" && direction.col !== 0)
   ) {
-    await move(position, direction, thread);
+    await move(position, direction);
     return;
   }
 
   if (next === "/") {
-    await move(position, { col: -direction.row, row: -direction.col }, thread);
+    await move(position, { col: -direction.row, row: -direction.col });
     return;
   }
 
   if (next === "\\") {
-    await move(position, { col: direction.row, row: direction.col }, thread);
+    await move(position, { col: direction.row, row: direction.col });
     return;
   }
 
   if (next === "|" && !isSplitAlreadyUsed(position)) {
     splitsUsed.push(position);
-    await move(position, { col: 0, row: -1 }, nextThread());
-    await move(position, { col: 0, row: 1 }, nextThread());
+    await move(position, { col: 0, row: -1 });
+    await move(position, { col: 0, row: 1 });
     return;
   }
 
   if (next === "-" && !isSplitAlreadyUsed(position)) {
     splitsUsed.push(position);
-    await move(position, { col: -1, row: 0 }, nextThread());
-    await move(position, { col: 1, row: 0 }, nextThread());
+    await move(position, { col: -1, row: 0 });
+    await move(position, { col: 1, row: 0 });
     return;
   }
 };
@@ -100,20 +89,53 @@ const calculateEnergy = (): number =>
     .map((r) => r.reduce((prev, curr) => prev + curr, 0))
     .reduce((prev, curr) => prev + curr, 0);
 
+const testMove = async (start: POS, direction: MOVE): Promise<number> => {
+  await move(start, direction);
+  return calculateEnergy();
+};
+
+const resetEnergy = async (): Promise<void> => {
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[0].length; j++) {
+      energy[i][j] = 0;
+    }
+  }
+};
+
 const runPart1 = async () => {
   console.time("part 1");
-  await move({ col: -1, row: 0 }, { col: 1, row: 0 }, 0);
-  visualize(energy);
+  const res = await testMove({ col: -1, row: 0 }, { col: 1, row: 0 });
   console.timeEnd("part 1");
-  console.log("part 1", calculateEnergy());
+  console.log("part 1", res);
 };
 runPart1();
 
-// 8152 TOO HIGH
+const allEnergies: number[] = [];
 
-// const runPart2 = async () => {
-//   console.time("part 2");
-//   console.timeEnd("part 2");
-//   console.log("part2");
-// };
-// runPart2();
+const runPart2 = async () => {
+  console.time("part 2");
+
+  for (let col = 0; col < MAX_COLS; col++) {
+    await resetEnergy();
+    const test = await testMove({ col, row: -1 }, { col: 0, row: 1 });
+    allEnergies.push(test);
+
+    await resetEnergy();
+    const test2 = await testMove({ col, row: MAX_ROWS }, { col: 0, row: -1 });
+    allEnergies.push(test2);
+  }
+
+  for (let row = 0; row < MAX_ROWS; row++) {
+    await resetEnergy();
+    const test = await testMove({ col: -1, row }, { col: 1, row: 0 });
+
+    allEnergies.push(test);
+
+    await resetEnergy();
+    const test2 = await testMove({ col: MAX_COLS, row }, { col: -1, row: 0 });
+    allEnergies.push(test2);
+  }
+  console.timeEnd("part 2");
+  console.log("part 2", Math.max(...allEnergies));
+};
+runPart2();
