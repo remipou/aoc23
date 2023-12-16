@@ -21,8 +21,7 @@ const energy: E = data.map((row: string[]) => row.slice().map(() => 0));
 energy[0][0] = 1;
 
 // visualize(data);
-
-const splitsUsed: POS[] = [];
+let splitsUsed: POS[] = [];
 const isSplitAlreadyUsed = (position: POS): boolean =>
   Boolean(
     splitsUsed.find(
@@ -94,12 +93,13 @@ const testMove = async (start: POS, direction: MOVE): Promise<number> => {
   return calculateEnergy();
 };
 
-const resetEnergy = async (): Promise<void> => {
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[0].length; j++) {
+const reset = async (): Promise<void> => {
+  for (let i = 0; i < MAX_ROWS; i++) {
+    for (let j = 0; j < MAX_COLS; j++) {
       energy[i][j] = 0;
     }
   }
+  splitsUsed = [];
 };
 
 const runPart1 = async () => {
@@ -116,22 +116,21 @@ const runPart2 = async () => {
   console.time("part 2");
 
   for (let col = 0; col < MAX_COLS; col++) {
-    await resetEnergy();
+    await reset();
     const test = await testMove({ col, row: -1 }, { col: 0, row: 1 });
     allEnergies.push(test);
 
-    await resetEnergy();
+    await reset();
     const test2 = await testMove({ col, row: MAX_ROWS }, { col: 0, row: -1 });
     allEnergies.push(test2);
   }
 
   for (let row = 0; row < MAX_ROWS; row++) {
-    await resetEnergy();
+    await reset();
     const test = await testMove({ col: -1, row }, { col: 1, row: 0 });
-
     allEnergies.push(test);
 
-    await resetEnergy();
+    await reset();
     const test2 = await testMove({ col: MAX_COLS, row }, { col: -1, row: 0 });
     allEnergies.push(test2);
   }
