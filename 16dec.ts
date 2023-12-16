@@ -29,26 +29,29 @@ const nextThread = (): number => {
   return lastThread;
 };
 
-const move = (currentPosition: POS, direction: MOVE, thread: number): void => {
-  if (lastThread > 25) {
-    visualize(energy);
-    console.log("energy", calculateEnergy());
-    process.exit(0);
-  }
+const splitsUsed: POS[] = [];
+const isSplitAlreadyUsed = (position: POS): boolean =>
+  Boolean(
+    splitsUsed.find(
+      (s: POS) => s.col === position.col && s.row === position.row
+    )
+  );
+
+const move = async (
+  currentPosition: POS,
+  direction: MOVE,
+  thread: number
+): Promise<void> => {
   if (direction.col === -1 && currentPosition.col === 0) {
-    console.log("stop", thread);
     return;
   }
   if (direction.col === 1 && currentPosition.col === MAX_COLS - 1) {
-    console.log("stop", thread);
     return;
   }
   if (direction.row === -1 && currentPosition.row === 0) {
-    console.log("stop", thread);
     return;
   }
   if (direction.row === 1 && currentPosition.row === MAX_ROWS - 1) {
-    console.log("stop", thread);
     return;
   }
 
@@ -63,34 +66,31 @@ const move = (currentPosition: POS, direction: MOVE, thread: number): void => {
     (next === "|" && direction.row !== 0) ||
     (next === "-" && direction.col !== 0)
   ) {
-    console.log(`continue ${next}`, thread);
-    move(position, direction, thread);
+    await move(position, direction, thread);
     return;
   }
 
   if (next === "/") {
-    console.log("turning /", thread);
-    move(position, { col: -direction.row, row: -direction.col }, thread);
+    await move(position, { col: -direction.row, row: -direction.col }, thread);
     return;
   }
 
   if (next === "\\") {
-    console.log("turning \\", thread);
-    move(position, { col: direction.row, row: direction.col }, thread);
+    await move(position, { col: direction.row, row: direction.col }, thread);
     return;
   }
 
-  if (next === "|") {
-    console.log("split |", thread);
-    move(position, { col: 0, row: -1 }, nextThread());
-    move(position, { col: 0, row: 1 }, nextThread());
+  if (next === "|" && !isSplitAlreadyUsed(position)) {
+    splitsUsed.push(position);
+    await move(position, { col: 0, row: -1 }, nextThread());
+    await move(position, { col: 0, row: 1 }, nextThread());
     return;
   }
 
-  if (next === "-") {
-    console.log("split -", thread);
-    move(position, { col: -1, row: 0 }, nextThread());
-    move(position, { col: 1, row: 0 }, nextThread());
+  if (next === "-" && !isSplitAlreadyUsed(position)) {
+    splitsUsed.push(position);
+    await move(position, { col: -1, row: 0 }, nextThread());
+    await move(position, { col: 1, row: 0 }, nextThread());
     return;
   }
 };
@@ -100,13 +100,18 @@ const calculateEnergy = (): number =>
     .map((r) => r.reduce((prev, curr) => prev + curr, 0))
     .reduce((prev, curr) => prev + curr, 0);
 
-move({ col: 0, row: 0 }, { col: 1, row: 0 }, 0);
+const runPart1 = async () => {
+  console.time("part 1");
+  await move({ col: 0, row: 0 }, { col: 1, row: 0 }, 0);
+  console.timeEnd("part 1");
+  visualize(energy);
+  console.log("part 1", calculateEnergy());
+};
+runPart1();
 
-console.time("part 1");
-console.timeEnd("part 1");
-
-console.log("part 1", calculateEnergy());
-
-console.time("part 2");
-console.timeEnd("part 2");
-// console.log(part2);
+// const runPart2 = async () => {
+//   console.time("part 2");
+//   console.timeEnd("part 2");
+//   console.log("part2");
+// };
+// runPart2();
