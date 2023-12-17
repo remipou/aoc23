@@ -3,9 +3,11 @@
   "editor.insertSpaces": true,
   "html.autoClosingTags": false,
   "editor.formatOnSave": true,
-  "vetur.validation.template": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
   }
 }
