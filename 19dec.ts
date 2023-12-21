@@ -101,5 +101,26 @@ console.timeEnd("part 1");
 console.log("part 1", part1);
 
 console.time("part 2");
+
+const getMax = (ratings: Array<Rating | null>): Rating => {
+  return {
+    x: Math.max(...ratings.map((r) => r?.x || 0)),
+    m: Math.max(...ratings.map((r) => r?.m || 0)),
+    a: Math.max(...ratings.map((r) => r?.a || 0)),
+    s: Math.max(...ratings.map((r) => r?.s || 0)),
+  };
+};
+const max = getMax(ratings);
+const all: Result[] = [];
+for (let x = 0; x <= max.x; x++) {
+  for (let m = 0; m <= max.m; m++) {
+    for (let a = 0; a <= max.a; a++) {
+      for (let s = 0; s <= max.s; s++) {
+        all.push(processRating({ x, m, a, s }));
+      }
+    }
+  }
+}
+
 console.timeEnd("part 2");
-// console.log(part2);
+console.log("part2", all.filter((r: Result) => r.accepted).length);

@@ -5,8 +5,8 @@ const data: string = getData(date, test);
 
 console.time("part 1");
 console.timeEnd("part 1");
-// console.log(part1);
+console.log("part1");
 
 console.time("part 2");
 console.timeEnd("part 2");
-// console.log(part2);
+console.log("part2");
